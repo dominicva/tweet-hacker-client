@@ -44,6 +44,9 @@ function App() {
           <div>Loading...</div>
         ) : (
           <div>
+            <p>
+              {data.data.user.handle} <strong>{data.data.user.name}</strong>
+            </p>
             {data.data.tweets.map(tweet => (
               <li key={tweet.id}>
                 <p>{tweet.text}</p>

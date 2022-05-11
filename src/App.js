@@ -12,6 +12,7 @@ import { FaTwitter } from 'react-icons/fa';
 import { AtSignIcon } from '@chakra-ui/icons';
 import { useDataApi } from './hooks/useDataApi';
 import './App.css';
+import theme from './theme';
 
 function App({ initialUsername }) {
   const [username, setUsername] = useState(initialUsername);
@@ -47,7 +48,10 @@ function App({ initialUsername }) {
                 onChange={e => setUsername(e.target.value)}
               />
             </InputGroup>
-            <Button colorScheme="twitter" leftIcon={<FaTwitter />}>
+            <Button
+              backgroundColor={theme.colors.brand.primary}
+              leftIcon={<FaTwitter />}
+            >
               Get tweets
             </Button>
           </FormControl>

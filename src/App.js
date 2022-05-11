@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import {
   ChakraProvider,
+  Box,
+  Stack,
+  Spacer,
   Button,
   FormControl,
   FormLabel,
@@ -14,7 +17,9 @@ import { useDataApi } from './hooks/useDataApi';
 import './App.css';
 import theme from './theme';
 
-function App({ initialUsername }) {
+const { brand: colorPalette } = theme.colors;
+
+function App({ initialUsername = 'spacex' }) {
   const [username, setUsername] = useState(initialUsername);
   const [{ data, isLoading, isError }, doFetch] = useDataApi(
     `http://localhost:3001/api/tweets/${initialUsername}`,
@@ -25,37 +30,46 @@ function App({ initialUsername }) {
   );
 
   return (
-    <ChakraProvider>
-      <main className="App">
-        <section>
-          <FormControl
-            onSubmit={e => {
-              e.preventDefault();
-              doFetch(`http://localhost:3001/api/tweets/${username}`);
-            }}
-          >
-            <FormLabel htmlFor="username">Twitter username</FormLabel>
-            <InputGroup>
+    <ChakraProvider theme={theme}>
+      <Box id="app" bgColor={theme.colors.brand.background}>
+        <FormControl
+          onSubmit={e => {
+            e.preventDefault();
+            doFetch(`http://localhost:3001/api/tweets/${username}`);
+          }}
+        >
+          <Stack>
+            <FormLabel
+              mb={0}
+              color={theme.colors.brand.text}
+              htmlFor="username"
+            >
+              Twitter username
+            </FormLabel>
+            <InputGroup maxW="md">
               <InputLeftElement
                 pointerEvents="none"
                 children={<AtSignIcon />}
               />
               <Input
+                id="username"
                 isRequired={true}
                 variant="filled"
-                type="text"
                 value={username}
                 onChange={e => setUsername(e.target.value)}
               />
             </InputGroup>
+            <Spacer />
             <Button
-              backgroundColor={theme.colors.brand.primary}
+              h="12"
+              maxW="48"
+              backgroundColor={colorPalette.primary}
               leftIcon={<FaTwitter />}
             >
               Get tweets
             </Button>
-          </FormControl>
-        </section>
+          </Stack>
+        </FormControl>
 
         {isError && <div>Something went wrong...</div>}
 
@@ -74,7 +88,7 @@ function App({ initialUsername }) {
             ))}
           </div>
         )}
-      </main>
+      </Box>
     </ChakraProvider>
   );
 }

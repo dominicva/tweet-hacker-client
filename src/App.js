@@ -1,42 +1,57 @@
-import { useState, Fragment } from 'react';
+import { useState } from 'react';
+import {
+  ChakraProvider,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputLeftElement,
+} from '@chakra-ui/react';
+import { FaTwitter } from 'react-icons/fa';
+import { AtSignIcon } from '@chakra-ui/icons';
 import { useDataApi } from './hooks/useDataApi';
 import './App.css';
 
-function App() {
-  const [username, setUsername] = useState('dominicva');
-  const [topic, setTopic] = useState('');
+function App({ initialUsername }) {
+  const [username, setUsername] = useState(initialUsername);
   const [{ data, isLoading, isError }, doFetch] = useDataApi(
-    `http://localhost:3001/api/tweets/${username}`,
+    `http://localhost:3001/api/tweets/${initialUsername}`,
     {
-      data: {
-        user: {},
-        tweets: [],
-      },
+      user: {},
+      tweets: [],
     }
   );
 
   return (
-    <div className="App">
-      <Fragment>
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            doFetch(`http://localhost:3001/api/tweets/${username}/${topic}`);
-          }}
-        >
-          <input
-            type="text"
-            value={`@${username}`}
-            onChange={e => setUsername(e.target.value.slice(1))}
-          ></input>
-          <input
-            type="text"
-            value={topic}
-            placeholder="e.g. bitcoin"
-            onChange={e => setTopic(e.target.value)}
-          ></input>
-          <button type="submit">Get tweets</button>
-        </form>
+    <ChakraProvider>
+      <main className="App">
+        <section>
+          <FormControl
+            onSubmit={e => {
+              e.preventDefault();
+              doFetch(`http://localhost:3001/api/tweets/${username}`);
+            }}
+          >
+            <FormLabel htmlFor="username">Twitter username</FormLabel>
+            <InputGroup>
+              <InputLeftElement
+                pointerEvents="none"
+                children={<AtSignIcon />}
+              />
+              <Input
+                isRequired={true}
+                variant="filled"
+                type="text"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+              />
+            </InputGroup>
+            <Button colorScheme="twitter" leftIcon={<FaTwitter />}>
+              Get tweets
+            </Button>
+          </FormControl>
+        </section>
 
         {isError && <div>Something went wrong...</div>}
 
@@ -45,17 +60,18 @@ function App() {
         ) : (
           <div>
             <p>
-              {data.data.user.handle} <strong>{data.data.user.name}</strong>
+              Recent tweets by <strong>@{data.user.username}</strong>{' '}
             </p>
-            {data.data.tweets.map(tweet => (
+
+            {data.tweets.map(tweet => (
               <li key={tweet.id}>
                 <p>{tweet.text}</p>
               </li>
             ))}
           </div>
         )}
-      </Fragment>
-    </div>
+      </main>
+    </ChakraProvider>
   );
 }
 
